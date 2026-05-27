@@ -1,12 +1,16 @@
 name: Flowscope Check
 
-# Runs flowscope against every example file. Bad examples are expected to
-# produce violations -- '|| true' lets the step exit 0 so GHA does not emit
-# a spurious "Process completed with exit code 1" annotation. The clean
-# example has no '|| true' and will fail the check if it ever regresses.
+# Two jobs:
 #
-# Manual git checkout is used instead of actions/checkout to avoid the
-# Node.js 20 deprecation warning from that action.
+# scan: hard enforcement. Bad examples use '|| true' so GHA doesn't emit
+#   spurious annotations -- this is a shell-level demo convenience, not the
+#   warn-only feature. The clean example has no '|| true' and will fail the
+#   job if it ever regresses.
+#
+# audit: warn-only mode. Runs the same bad examples with --warn-only, which
+#   makes flowscope itself exit 0. No '|| true' needed -- the flag is doing
+#   the work. Step summary shows violations marked as "would have failed".
+#   This is what a gradual rollout looks like before enforcement is enabled.
 
 on:
   push:
@@ -15,6 +19,7 @@ on:
 
 jobs:
   scan:
+    name: Hard enforcement
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -38,3 +43,29 @@ jobs:
 
       - name: "clean-least-privilege.yml -- must pass"
         run: flowscope .github/workflows/clean-least-privilege.yml
+
+  audit:
+    name: Warn-only (audit mode)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Install flowscope
+        run: pip install "git+https://github.com/mshade/flowscope.git" --quiet
+
+      - name: "write-all.yml -- violations reported, exit 0"
+        run: flowscope --warn-only examples/write-all.yml
+
+      - name: "implicit-full-access.yml -- violations reported, exit 0"
+        run: flowscope --warn-only examples/implicit-full-access.yml
+
+      - name: "workflow-level-write-bleed.yml -- violations reported, exit 0"
+        run: flowscope --warn-only examples/workflow-level-write-bleed.yml
+
+      - name: "agentic-requires-review.yml -- violations reported, exit 0"
+        run: flowscope --warn-only examples/agentic-requires-review.yml
+
+      - name: "clean-least-privilege.yml -- passes in both modes"
+        run: flowscope --warn-only .github/workflows/clean-least-privilege.yml
