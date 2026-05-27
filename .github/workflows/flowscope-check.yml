@@ -1,0 +1,48 @@
+name: Flowscope Check
+
+# Runs flowscope against every example file. Bad examples are expected to
+# produce violations -- continue-on-error lets the job finish so all results
+# are visible. The clean example has no continue-on-error and will fail the
+# check if it ever regresses.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "write-all.yml -- expect HARD_BLOCK (Rule 1)"
+        uses: mshade/flowscope@main
+        with:
+          workflow_file: examples/write-all.yml
+        continue-on-error: true
+
+      - name: "implicit-full-access.yml -- expect HARD_BLOCK (Rule 2)"
+        uses: mshade/flowscope@main
+        with:
+          workflow_file: examples/implicit-full-access.yml
+        continue-on-error: true
+
+      - name: "workflow-level-write-bleed.yml -- expect HARD_BLOCK (Rule 3)"
+        uses: mshade/flowscope@main
+        with:
+          workflow_file: examples/workflow-level-write-bleed.yml
+        continue-on-error: true
+
+      - name: "agentic-requires-review.yml -- expect REQUIRES_REVIEW (Rule 4)"
+        uses: mshade/flowscope@main
+        with:
+          workflow_file: examples/agentic-requires-review.yml
+        continue-on-error: true
+
+      - name: "clean-least-privilege.yml -- must pass"
+        uses: mshade/flowscope@main
+        with:
+          workflow_file: .github/workflows/clean-least-privilege.yml
