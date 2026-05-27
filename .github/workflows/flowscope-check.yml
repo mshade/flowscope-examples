@@ -41,6 +41,12 @@ jobs:
       - name: "agentic-requires-review.yml -- expect REQUIRES_REVIEW (Rule 4)"
         run: flowscope examples/agentic-requires-review.yml || true
 
+      - name: "pull-request-target-poisoning.yml -- expect HARD_BLOCK (Rule 5)"
+        run: flowscope examples/pull-request-target-poisoning.yml || true
+
+      - name: "workflow-run-chain.yml -- expect REQUIRES_REVIEW (Rule 6)"
+        run: flowscope examples/workflow-run-chain.yml || true
+
       - name: "clean-least-privilege.yml -- must pass"
         run: flowscope .github/workflows/clean-least-privilege.yml
 
@@ -66,6 +72,12 @@ jobs:
 
       - name: "agentic-requires-review.yml -- violations reported, exit 0"
         run: flowscope --warn-only examples/agentic-requires-review.yml
+
+      - name: "pull-request-target-poisoning.yml -- violations reported, exit 0"
+        run: flowscope --warn-only examples/pull-request-target-poisoning.yml
+
+      - name: "workflow-run-chain.yml -- violations reported, exit 0"
+        run: flowscope --warn-only examples/workflow-run-chain.yml
 
       - name: "clean-least-privilege.yml -- passes in both modes"
         run: flowscope --warn-only .github/workflows/clean-least-privilege.yml

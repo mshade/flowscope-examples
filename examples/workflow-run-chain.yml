@@ -1,0 +1,22 @@
+name: Deploy after CI (Rule 6 — REQUIRES_REVIEW)
+
+# Demonstrates: workflow_run trigger with write scope inherits implicit
+# secrets access from the triggering workflow. Common legitimate pattern
+# for deploy-after-CI but warrants human review — each chain is a privilege
+# escalation path if the upstream workflow is compromised.
+# Resolution: CODEOWNERS-routed PR approval is the recorded acknowledgment;
+# or register a 'workflow_run' exception if the deploy semantics are
+# already vetted.
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - run: echo "deploying"

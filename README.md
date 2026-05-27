@@ -18,6 +18,8 @@ inspect.
 | `examples/implicit-full-access.yml` | `permissions: {}` — equivalent to write-all on GHA | `HARD_BLOCK` (Rule 2) |
 | `examples/workflow-level-write-bleed.yml` | Workflow-level write scope with an unscoped job | `HARD_BLOCK` (Rule 3) |
 | `examples/agentic-requires-review.yml` | Agentic action with write scope, no observed baseline | `REQUIRES_REVIEW` (Rule 4) |
+| `examples/pull-request-target-poisoning.yml` | `pull_request_target` trigger with write scope (fork-PR-poisoning vector) | `HARD_BLOCK` (Rule 5) |
+| `examples/workflow-run-chain.yml` | `workflow_run` trigger with write scope (chained privilege) | `REQUIRES_REVIEW` (Rule 6) |
 | `.github/workflows/clean-least-privilege.yml` | Every job scoped explicitly; no write scope bleed | Passes |
 
 ## Scan locally

@@ -1,0 +1,24 @@
+name: PR Labeler (Rule 5 — HARD_BLOCK)
+
+# Demonstrates: pull_request_target with write scope is the canonical fork-PR
+# poisoning attack vector. The workflow runs in the base repo context with
+# secrets and a write-scoped GITHUB_TOKEN, but fires on PRs from forks. If
+# the workflow checks out the PR's HEAD ref, attacker-controlled code runs
+# with write access.
+# Fix: switch to 'pull_request' (no write tokens for fork PRs), or only
+# check out the base ref and never the PR HEAD. If genuinely required for
+# a labeling bot etc., register a 'pull_request_target' exception with a
+# justification documenting that HEAD is never checked out.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "applying labels"
