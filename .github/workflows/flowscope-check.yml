@@ -19,12 +19,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - name: Checkout
-        run: |
-          git init
-          git remote add origin "https://github.com/${{ github.repository }}.git"
-          git fetch --depth=1 origin "${{ github.sha }}"
-          git checkout FETCH_HEAD
+      - uses: actions/checkout@v6
 
       - name: Install flowscope
         run: pip install "git+https://github.com/mshade/flowscope.git" --quiet
