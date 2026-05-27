@@ -1,0 +1,17 @@
+name: Implicit Full Access (Rule 2 — HARD_BLOCK)
+
+# Demonstrates: permissions: {} grants full write access on GitHub Actions,
+# equivalent to write-all. This is a HARD_BLOCK.
+# Fix: explicitly declare only the scopes required (e.g. contents: read).
+
+on:
+  pull_request:
+
+permissions: {}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Running tests..."

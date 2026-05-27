@@ -1,0 +1,31 @@
+name: Clean Least-Privilege (Passes)
+
+# Demonstrates: a workflow that passes all flowscope rules.
+# - No workflow-level write scopes
+# - Every job declares its own permissions block
+# - No agentic actions with write scope
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Running tests..."
+
+  publish-docs:
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: write  # scoped only to this job, which actually needs it
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Publishing docs..."

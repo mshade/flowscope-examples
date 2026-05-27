@@ -1,0 +1,23 @@
+name: Agentic Step with Write Scope (Rule 4 — REQUIRES_REVIEW)
+
+# Demonstrates: a job that runs an agentic action (claude-code-action) while
+# holding a write scope and no observed baseline on file. Flowscope cannot
+# statically prove the agent will only exercise read operations, so it flags
+# this for human review rather than auto-blocking.
+# Resolution: security team sign-off, not a code change.
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  claude:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}

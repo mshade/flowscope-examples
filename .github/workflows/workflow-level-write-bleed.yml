@@ -1,0 +1,31 @@
+name: Workflow-Level Write Bleed (Rule 3 — HARD_BLOCK)
+
+# Demonstrates: a workflow-level write scope (contents: write) bleeds into
+# any job that does not declare its own permissions block. The 'test' job
+# here is unscoped and inherits write access it does not need.
+# Fix: add an explicit permissions block to every job, or move the write
+# scope to only the job that requires it.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write  # needed by the release job, but bleeds into test
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    # No permissions block -- inherits contents: write from the workflow level.
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Running tests..."
+
+  release:
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Publishing release..."

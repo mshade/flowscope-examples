@@ -1,0 +1,17 @@
+name: Write-All Permissions (Rule 1 — HARD_BLOCK)
+
+# Demonstrates: permissions: write-all triggers an immediate HARD_BLOCK.
+# Fix: remove write-all and declare only the scopes the workflow actually needs.
+
+on:
+  push:
+    branches: [main]
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "Building..."
