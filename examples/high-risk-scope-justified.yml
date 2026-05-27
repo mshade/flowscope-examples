@@ -1,0 +1,18 @@
+name: Cloud Deploy — justified (passes Rule 7)
+
+# Demonstrates: same high-risk scope as the no-justification example, but
+# with an inline `# flowscope:reason:` comment on the scope line. The
+# justification suppresses the Rule 7 advisory. The comment lives in
+# version control next to the scope it justifies — visible in code review,
+# greppable, and impossible to lose track of.
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # flowscope:reason: OIDC for AWS via configure-aws-credentials
+    steps:
+      - run: echo "assume cloud role via OIDC"

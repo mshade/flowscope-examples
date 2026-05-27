@@ -1,0 +1,19 @@
+name: Cloud Deploy (Rule 7 — ADVISORY)
+
+# Demonstrates: a high-risk scope (id-token: write) declared without an
+# inline justification comment. id-token: write mints OIDC tokens, typically
+# to assume a cloud IAM role — that's a real cross-system privilege extension
+# that deserves a written reason. Advisory only — does not block the check.
+# Fix: add `# flowscope:reason: <why>` on the scope line, e.g.
+#   id-token: write  # flowscope:reason: OIDC for AWS via configure-aws-credentials
+
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - run: echo "assume cloud role via OIDC"

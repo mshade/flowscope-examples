@@ -20,6 +20,8 @@ inspect.
 | `examples/agentic-requires-review.yml` | Agentic action with write scope, no observed baseline | `REQUIRES_REVIEW` (Rule 4) |
 | `examples/pull-request-target-poisoning.yml` | `pull_request_target` trigger with write scope (fork-PR-poisoning vector) | `HARD_BLOCK` (Rule 5) |
 | `examples/workflow-run-chain.yml` | `workflow_run` trigger with write scope (chained privilege) | `REQUIRES_REVIEW` (Rule 6) |
+| `examples/high-risk-scope-no-justification.yml` | `id-token: write` declared without `# flowscope:reason:` comment | `ADVISORY` (Rule 7) |
+| `examples/high-risk-scope-justified.yml` | Same as above but with inline justification comment | Passes (advisory suppressed) |
 | `.github/workflows/clean-least-privilege.yml` | Every job scoped explicitly; no write scope bleed | Passes |
 
 ## Scan locally
