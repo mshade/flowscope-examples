@@ -1,16 +1,17 @@
 name: Flowscope Check
 
-# Two jobs:
+# Two jobs demonstrating the two enforcement postures:
 #
-# scan: hard enforcement. Bad examples use '|| true' so GHA doesn't emit
-#   spurious annotations -- this is a shell-level demo convenience, not the
-#   warn-only feature. The clean example has no '|| true' and will fail the
-#   job if it ever regresses.
+# scan: hard enforcement. Both HARD_BLOCK and REQUIRES_REVIEW exit non-zero;
+#   ADVISORY exits 0. Bad-example steps use '|| true' so the demo job
+#   continues to completion and all results are visible in the step summary.
+#   This is a demo convenience, NOT the warn-only feature -- in real
+#   deployment, the non-zero exit is exactly what gates the merge.
 #
-# audit: warn-only mode. Runs the same bad examples with --warn-only, which
-#   makes flowscope itself exit 0. No '|| true' needed -- the flag is doing
-#   the work. Step summary shows violations marked as "would have failed".
-#   This is what a gradual rollout looks like before enforcement is enabled.
+# audit: warn-only mode. The --warn-only flag makes flowscope exit 0 for
+#   ALL blocking violations (HARD_BLOCK and REQUIRES_REVIEW). Step summary
+#   shows them as "would have failed". This is what a gradual rollout
+#   looks like before enforcement is enabled.
 
 on:
   push:
