@@ -1,0 +1,9 @@
+[
+  {
+    "scope": "write-all",
+    "justification": "TODO: describe why this exception is needed",
+    "expires_at": "2026-08-26",
+    "workflow": "examples/write-all.yml",
+    "job_id": null
+  }
+]
