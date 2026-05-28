@@ -1,0 +1,39 @@
+name: Auto-Exception Demo
+
+# Demonstrates the create_exception_pr flow.
+#
+# When dispatched, runs the flowscope action against examples/write-all.yml
+# (a HARD_BLOCK violation) with create_exception_pr: true. flowscope:
+#   1. Detects the violation, exits non-zero
+#   2. Creates branch flowscope/exception-write-all (deterministic name)
+#   3. Scaffolds .github/flowscope-exceptions.json with the blocked scope
+#      pre-filled (justification: TODO, expires_at: today + 90d)
+#   4. Opens a draft PR with instructions for the developer
+#
+# Re-dispatching after the PR exists detects the existing branch and skips
+# creation (idempotent). To re-test from scratch, close the PR and delete
+# the branch first:
+#   gh pr close <num> --repo mshade/flowscope-examples --delete-branch
+#
+# Note on action pinning: mshade/flowscope is first-party (we own it), so we
+# track @main rather than pinning a SHA. Third-party actions in this repo
+# (actions/checkout) are SHA-pinned.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # for creating the exception branch + commit
+      pull-requests: write  # for opening the draft PR
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Scan examples/write-all.yml with auto-exception
+        uses: mshade/flowscope@main
+        with:
+          workflow_file: examples/write-all.yml
+          create_exception_pr: "true"
+        continue-on-error: true  # the violation is expected; we want the PR creation step to be the focus
